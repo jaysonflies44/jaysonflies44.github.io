@@ -1,0 +1,270 @@
+<html><head>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: #1a1a2e;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.scores {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.score-card {
+    background: #16213e;
+    padding: 15px 25px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.score-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #00ff88;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    background: #16213e;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cell:hover {
+    background: #1f2b4e;
+}
+
+.cell.x {
+    color: #00ff88;
+}
+
+.cell.o {
+    color: #ff6b6b;
+}
+
+.status {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.reset-btn {
+    padding: 10px 20px;
+    background: #00ff88;
+    border: none;
+    border-radius: 5px;
+    color: #1a1a2e;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+    background: #00cc6a;
+}
+
+.winning-line {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.3);
+    z-index: 1;
+}
+</style>
+</head>
+<body>
+    <div class="header">
+        <h1>Tic Tac Toe</h1>
+    </div>
+    <div class="scores">
+        <div class="score-card">
+            <div class="score-number" id="playerScore">0</div>
+            <div>Player (X)</div>
+        </div>
+        <div class="score-card">
+            <div class="score-number" id="computerScore">0</div>
+            <div>Computer (O)</div>
+        </div>
+    </div>
+    <div class="board" id="board"></div>
+    <div class="status" id="status">Your turn!</div>
+    <button class="reset-btn" id="resetBtn">Reset Game</button>
+
+<script>
+class TicTacToe {
+    constructor() {
+        this.board = Array(9).fill('');
+        this.currentPlayer = 'X';
+        this.gameActive = true;
+        this.scores = {
+            X: parseInt(localStorage.getItem('playerScore')) || 0,
+            O: parseInt(localStorage.getItem('computerScore')) || 0
+        };
+        this.winningCombinations = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6] // Diagonals
+        ];
+        this.initializeBoard();
+        this.updateScoreDisplay();
+    }
+
+    initializeBoard() {
+        const boardElement = document.getElementById('board');
+        boardElement.innerHTML = '';
+        this.board.forEach((_, index) => {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.dataset.index = index;
+            cell.addEventListener('click', () => this.handleCellClick(index));
+            boardElement.appendChild(cell);
+        });
+    }
+
+    handleCellClick(index) {
+        if (!this.gameActive || this.board[index] !== '') return;
+
+        this.makeMove(index, 'X');
+        if (this.gameActive) {
+            setTimeout(() => this.computerMove(), 500);
+        }
+    }
+
+    makeMove(index, player) {
+        this.board[index] = player;
+        const cell = document.querySelector(`[data-index="${index}"]`);
+        cell.textContent = player;
+        cell.classList.add(player.toLowerCase());
+
+        if (this.checkWinner(player)) {
+            this.handleWin(player);
+        } else if (!this.board.includes('')) {
+            this.handleDraw();
+        }
+    }
+
+    computerMove() {
+        // Simple AI with some randomness
+        let bestMove = -1;
+        let bestScore = -Infinity;
+        
+        // First, check if computer can win
+        for (let i = 0; i < 9; i++) {
+            if (this.board[i] === '') {
+                this.board[i] = 'O';
+                if (this.checkWinner('O')) {
+                    this.board[i] = '';
+                    bestMove = i;
+                    break;
+                }
+                this.board[i] = '';
+            }
+        }
+
+        // If no winning move, check if player can win and block
+        if (bestMove === -1) {
+            for (let i = 0; i < 9; i++) {
+                if (this.board[i] === '') {
+                    this.board[i] = 'X';
+                    if (this.checkWinner('X')) {
+                        this.board[i] = '';
+                        bestMove = i;
+                        break;
+                    }
+                    this.board[i] = '';
+                }
+            }
+        }
+
+        // If no critical moves, choose randomly with some strategy
+        if (bestMove === -1) {
+            // Prefer center
+            if (this.board[4] === '') {
+                bestMove = 4;
+            } else {
+                // Random move with preference for corners
+                const corners = [0, 2, 6, 8];
+                const availableCorners = corners.filter(i => this.board[i] === '');
+                
+                if (availableCorners.length > 0 && Math.random() > 0.3) {
+                    bestMove = availableCorners[Math.floor(Math.random() * availableCorners.length)];
+                } else {
+                    const availableMoves = this.board
+                        .map((cell, index) => cell === '' ? index : null)
+                        .filter(cell => cell !== null);
+                    bestMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+                }
+            }
+        }
+
+        if (bestMove !== -1) {
+            this.makeMove(bestMove, 'O');
+        }
+    }
+
+    checkWinner(player) {
+        return this.winningCombinations.some(combination => {
+            return combination.every(index => this.board[index] === player);
+        });
+    }
+
+    handleWin(player) {
+        this.gameActive = false;
+        this.scores[player]++;
+        localStorage.setItem('playerScore', this.scores['X']);
+        localStorage.setItem('computerScore', this.scores['O']);
+        this.updateScoreDisplay();
+        document.getElementById('status').textContent = 
+            player === 'X' ? 'You won!' : 'Computer won!';
+    }
+
+    handleDraw() {
+        this.gameActive = false;
+        document.getElementById('status').textContent = "It's a draw!";
+    }
+
+    updateScoreDisplay() {
+        document.getElementById('playerScore').textContent = this.scores['X'];
+        document.getElementById('computerScore').textContent = this.scores['O'];
+    }
+
+    reset() {
+        this.board = Array(9).fill('');
+        this.currentPlayer = 'X';
+        this.gameActive = true;
+        this.initializeBoard();
+        document.getElementById('status').textContent = 'Your turn!';
+    }
+}
+
+const game = new TicTacToe();
+document.getElementById('resetBtn').addEventListener('click', () => game.reset());
+</script>
+</body></html>
