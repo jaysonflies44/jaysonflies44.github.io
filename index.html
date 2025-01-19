@@ -41,6 +41,12 @@
             padding: 10px;
             text-align: center;
             width: 200px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .addon:hover {
+            transform: scale(1.05);
         }
 
         .addon img {
@@ -98,17 +104,19 @@
             alert('Upload functionality not implemented.');
         });
 
-        // Sample data
+        // Sample Mod Data
         const mods = [
             {
-                name: 'Mod 1',
-                thumbnail: 'thumbnails/mod1.png',
-                download: 'downloads/mod1.zip'
+                modName: 'Mod 1',
+                modDescription: 'This is the first mod.',
+                modUsed: 'mods/mod1.zip',
+                thumbnailUsed: 'thumbnails/mod1.png'
             },
             {
-                name: 'Mod 2',
-                thumbnail: 'thumbnails/mod2.png',
-                download: 'downloads/mod2.zip'
+                modName: 'Mod 2',
+                modDescription: 'This is the second mod.',
+                modUsed: 'mods/mod2.zip',
+                thumbnailUsed: 'thumbnails/mod2.png'
             }
         ];
 
@@ -117,12 +125,21 @@
             const modDiv = document.createElement('div');
             modDiv.className = 'addon';
             modDiv.innerHTML = `
-                <img src="${mod.thumbnail}" alt="${mod.name} Thumbnail">
-                <h3>${mod.name}</h3>
-                <a href="${mod.download}" download>Download</a>
+                <img src="${mod.thumbnailUsed}" alt="${mod.modName} Thumbnail">
+                <h3>${mod.modName}</h3>
+                <p>${mod.modDescription}</p>
+                <a href="${mod.modUsed}" download>Download</a>
             `;
             modsContainer.appendChild(modDiv);
         });
+
+        // Example of how to add new mods:
+        // mods.push({
+        //     modName: 'Mod 3',
+        //     modDescription: 'This is the third mod.',
+        //     modUsed: 'mods/mod3.zip',
+        //     thumbnailUsed: 'thumbnails/mod3.png'
+        // });
     </script>
 </body>
 </html>
