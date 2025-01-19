@@ -1,353 +1,128 @@
-<html><head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Interactive Coding Hub</title>
-<style>
-:root {
-  --primary: #2a9d8f;
-  --secondary: #e9c46a;
-  --dark: #264653;
-  --light: #f4f1de;
-  --accent: #e76f51;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Addons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 1em 0;
+        }
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  background: var(--light);
-  color: var(--dark);
-}
+        main {
+            padding: 20px;
+        }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-}
+        .upload, .addons {
+            margin-bottom: 20px;
+        }
 
-nav {
-  background: var(--dark);
-  padding: 1rem;
-  margin-bottom: 2rem;
-}
+        .addons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
 
-.nav-links {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-}
+        .addon {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            width: 200px;
+        }
 
-.nav-links button {
-  background: transparent;
-  border: none;
-  color: var(--light);
-  cursor: pointer;
-  font-size: 1.1rem;
-  padding: 0.5rem 1rem;
-  transition: all 0.3s ease;
-}
+        .addon img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
 
-.nav-links button:hover {
-  color: var(--secondary);
-  transform: translateY(-2px);
-}
-
-.section {
-  display: none;
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  margin-bottom: 2rem;
-}
-
-.active {
-  display: block;
-  animation: fadeIn 0.5s ease;
-}
-
-/* Quiz Styles */
-.quiz-container {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.question {
-  margin-bottom: 2rem;
-}
-
-.options {
-  display: grid;
-  gap: 1rem;
-}
-
-.option {
-  padding: 1rem;
-  border: 2px solid var(--primary);
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.option:hover {
-  background: var(--primary);
-  color: white;
-}
-
-/* Code Editor Styles */
-.editor-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  height: 500px;
-}
-
-.code-input {
-  font-family: monospace;
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  resize: none;
-}
-
-.preview {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 1rem;
-  background: white;
-}
-
-/* Tic Tac Toe Styles */
-.game-board {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  max-width: 300px;
-  margin: 0 auto;
-}
-
-.cell {
-  aspect-ratio: 1;
-  background: var(--light);
-  border: 2px solid var(--primary);
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  transition: all 0.3s ease;
-}
-
-.cell:hover {
-  background: var(--primary);
-  color: white;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 768px) {
-  .editor-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .nav-links {
-    flex-direction: column;
-    gap: 1rem;
-  }
-}
-</style>
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-<nav>
-  <div class="nav-links">
-    <button onclick="showSection('quiz')">Coding Quiz</button>
-    <button onclick="showSection('editor')">Live Editor</button>
-    <button onclick="showSection('game')">Tic Tac Toe</button>
-  </div>
-</nav>
+    <header>
+        <h1>Minecraft Addons</h1>
+    </header>
+    <main>
+        <section class="upload">
+            <h2>Upload Your Mod</h2>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <label for="modName">Mod Name:</label>
+                <input type="text" id="modName" name="modName" required><br><br>
 
-<div class="container">
-  <section id="quiz" class="section">
-    <div class="quiz-container">
-      <h2>Coding Quiz</h2>
-      <div id="quiz-content"></div>
-    </div>
-  </section>
+                <label for="thumbnail">Thumbnail:</label>
+                <input type="file" id="thumbnail" name="thumbnail" accept="image/*" required><br><br>
 
-  <section id="editor" class="section">
-    <div class="editor-container">
-      <textarea id="code-input" class="code-input" placeholder="Write your HTML code here..."></textarea>
-      <div id="preview" class="preview"></div>
-    </div>
-  </section>
+                <label for="modFile">Mod File:</label>
+                <input type="file" id="modFile" name="modFile" accept=".zip,.mcpack" required><br><br>
 
-  <section id="game" class="section">
-    <h2>Tic Tac Toe</h2>
-    <div class="game-board" id="board"></div>
-  </section>
-</div>
+                <input type="submit" value="Upload">
+            </form>
+        </section>
 
-<script>
-// Navigation
-function showSection(sectionId) {
-  document.querySelectorAll('.section').forEach(section => {
-    section.classList.remove('active');
-  });
-  document.getElementById(sectionId).classList.add('active');
-}
+        <section class="addons">
+            <h2>Available Mods</h2>
+            <div id="modsContainer">
+                <!-- Mods will be dynamically injected here -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>© 2025 Minecraft Addons</p>
+    </footer>
 
-// Quiz Implementation
-const quizQuestions = [
-  {
-    question: "What does HTML stand for?",
-    options: [
-      "Hyper Text Markup Language",
-      "High Tech Modern Language",
-      "Hyper Transfer Markup Language",
-      "Home Tool Markup Language"
-    ],
-    correct: 0
-  },
-  {
-    question: "Which CSS property is used to change the text color?",
-    options: [
-      "text-style",
-      "font-color",
-      "color",
-      "text-color"
-    ],
-    correct: 2
-  },
-  {
-    question: "What is the correct way to comment in JavaScript?",
-    options: [
-      "<!-- comment -->",
-      "// comment",
-      "/* comment */",
-      "Both B and C"
-    ],
-    correct: 3
-  }
-];
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Handle form submission logic here
+            alert('Upload functionality not implemented.');
+        });
 
-let currentScore = 0;
+        // Sample data
+        const mods = [
+            {
+                name: 'Mod 1',
+                thumbnail: 'thumbnails/mod1.png',
+                download: 'downloads/mod1.zip'
+            },
+            {
+                name: 'Mod 2',
+                thumbnail: 'thumbnails/mod2.png',
+                download: 'downloads/mod2.zip'
+            }
+        ];
 
-function initializeQuiz() {
-  const quizContent = document.getElementById('quiz-content');
-  quizContent.innerHTML = '';
-  
-  quizQuestions.forEach((q, index) => {
-    const questionDiv = document.createElement('div');
-    questionDiv.className = 'question';
-    questionDiv.innerHTML = `
-      <h3>Question ${index + 1}: ${q.question}</h3>
-      <div class="options">
-        ${q.options.map((option, i) => `
-          <div class="option" onclick="checkAnswer(${index}, ${i})">
-            ${option}
-          </div>
-        `).join('')}
-      </div>
-    `;
-    quizContent.appendChild(questionDiv);
-  });
-}
-
-function checkAnswer(questionIndex, selectedOption) {
-  const correct = quizQuestions[questionIndex].correct;
-  const options = document.querySelectorAll('.question')[questionIndex].querySelectorAll('.option');
-  
-  options.forEach(option => option.style.pointerEvents = 'none');
-  
-  if (selectedOption === correct) {
-    options[selectedOption].style.background = '#4CAF50';
-    options[selectedOption].style.color = 'white';
-    currentScore++;
-  } else {
-    options[selectedOption].style.background = '#f44336';
-    options[selectedOption].style.color = 'white';
-    options[correct].style.background = '#4CAF50';
-    options[correct].style.color = 'white';
-  }
-}
-
-// Live Code Editor Implementation
-const codeInput = document.getElementById('code-input');
-const preview = document.getElementById('preview');
-
-codeInput.addEventListener('input', () => {
-  preview.innerHTML = codeInput.value;
-});
-
-// Tic Tac Toe Implementation
-let currentPlayer = 'X';
-let gameBoard = ['', '', '', '', '', '', '', '', ''];
-let gameActive = true;
-
-function initializeGame() {
-  const board = document.getElementById('board');
-  board.innerHTML = '';
-  
-  for (let i = 0; i < 9; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.setAttribute('data-index', i);
-    cell.addEventListener('click', () => makeMove(i));
-    board.appendChild(cell);
-  }
-}
-
-function makeMove(index) {
-  if (gameBoard[index] === '' && gameActive) {
-    gameBoard[index] = currentPlayer;
-    document.querySelectorAll('.cell')[index].textContent = currentPlayer;
-    
-    if (checkWin()) {
-      alert(`Player ${currentPlayer} wins!`);
-      gameActive = false;
-      return;
-    }
-    
-    if (gameBoard.every(cell => cell !== '')) {
-      alert("It's a draw!");
-      gameActive = false;
-      return;
-    }
-    
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-  }
-}
-
-function checkWin() {
-  const winPatterns = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-    [0, 4, 8], [2, 4, 6] // Diagonals
-  ];
-  
-  return winPatterns.some(pattern => {
-    const [a, b, c] = pattern;
-    return gameBoard[a] !== '' &&
-           gameBoard[a] === gameBoard[b] &&
-           gameBoard[a] === gameBoard[c];
-  });
-}
-
-// Initialize everything
-document.addEventListener('DOMContentLoaded', () => {
-  showSection('quiz');
-  initializeQuiz();
-  initializeGame();
-});
-</script>
+        const modsContainer = document.getElementById('modsContainer');
+        mods.forEach(mod => {
+            const modDiv = document.createElement('div');
+            modDiv.className = 'addon';
+            modDiv.innerHTML = `
+                <img src="${mod.thumbnail}" alt="${mod.name} Thumbnail">
+                <h3>${mod.name}</h3>
+                <a href="${mod.download}" download>Download</a>
+            `;
+            modsContainer.appendChild(modDiv);
+        });
+    </script>
 </body>
 </html>
